@@ -1,0 +1,66 @@
+:root {
+    --gray-color: #666161;
+    --hover-white-color: #e9e6e7;
+    --white-color: #e9e3de;
+    --brown-color: #5e5653;
+    --alt-color: #cccccc;
+}
+
+body {
+    margin: 0px;
+    background-color: var(--gray-color);
+}
+
+header {
+    width: 100vw;
+    background: var(--gray-color);
+    text-align: center;
+    padding: 5px 5px 5px 5px;
+}
+
+header h1 {
+    margin: 0px;
+    color: var(--white-color);
+}
+
+header #days-container {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    padding: 10px;
+}
+
+header h2 {
+    color: var(--white-color);
+    margin: 0px;
+}
+
+#cell-container {
+    display: grid;
+    grid-template-columns: repeat(7, 200px);
+    gap: 2px;
+    background: var(--gray-color);
+    padding: 2px;
+    width: fit-content;
+    margin-inline: auto;
+}
+
+.cell {
+    width: 200px;
+    height: 150px;
+    background: var(--white-color);
+    margin: 0px;
+}
+
+.cell.alt {
+    background: var(--alt-color);
+}
+
+.cell p {
+    margin: 4px;
+    color: var(--brown-color);
+}
+
+.cell:hover {
+    background: var(--hover-white-color);
+}
