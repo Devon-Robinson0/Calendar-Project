@@ -23,25 +23,30 @@
 
         <div id="create-event-modal" class="modal">
             <div class="modal-content">
-                <h2>
-                    <input id="title-input" type="text" value="New Event" />
-                </h2>
-                
-                <div>
-                    <label>Time: 
-                        <input id="time-input" type="text" placeholder="XX:XX" size="10"/>
-                    </label>
-                    <select id="meridiam-input">
-                        <option value="am" selected>AM</option>
-                        <option value="pm">PM</option>
-                    </select>
+                <div class="form-row">
+                    <h2><input id="title-input" type="text" value="New Event" /></h2>
                 </div>
-                <label>location: 
+                
+                <div class="form-row">
+                    <label for="time-input">Time:</label>
+                    <div>
+                        <input id="time-input" type="text" placeholder="XX:XX" size="10"/>
+                        <select id="meridiam-input">
+                            <option value="am" selected>AM</option>
+                            <option value="pm">PM</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <label for="location-input">location:</label>
                     <input id="location-input" type="text" placeholder="enter location here" size="30"/>
-                </label>
-                <label for="description-input">Description: </label>
-                <textarea id="description-input" type="text" placeholder="enter Description here" size="40"></textarea>
-
+                </div>
+                
+                <div class="form-row">
+                    <label for="description-input">Description: </label>
+                    <textarea id="description-input" type="text" placeholder="enter Description here" size="40"></textarea>
+                </div>
                 <div id="confirm-event-btn-container">
                     <button id="confirm-event-btn"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></button>
                 </div>

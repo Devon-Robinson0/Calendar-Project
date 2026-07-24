@@ -1,20 +1,41 @@
 :root {
-    --gray-color: #666161;
-    --hover-white-color: #e9e6e7;
-    --white-color: #e9e3de;
-    --brown-color: #5e5653;
-    --alt-color: #cccccc;
+    --background: #3F3A36;
+    --surface: #5C5652;
+    --border: #8C857F;
+
+    --cream: #F5F1E8;
+    --cream-dark: #E7DED0;
+
+    --hover: #DCCDB7;
+
+    --brown: #8B6B4A;
+    --brown-light: #B28A5B;
+    --brown-dark: #5A4431;
+
+    --text-dark: #2F2A27;
+    --text-light: #FAF8F3;
+
+    /* colours */
+    --red: #B65C4A;
+    --orange: #C77B49;
+    --yellow: #C8A24D;
+    --green: #6F8A55;
+    --teal: #5E8B86;
+    --blue: #6A89A7;
+    --violet: #8C7AA9;
+    --pink: #B67B86;
 }
 
 body {
     margin: 0px;
-    background-color: var(--gray-color);
+    background-color: var(--background);
+    font-family: "figtree", sans-serif;
 }
 
 header {
     width: 100%;
     box-sizing: border-box;
-    background: var(--gray-color);
+    background: var(--surface);
     text-align: center;
     padding: 5px 5px 5px 5px;
     top: 0;
@@ -23,14 +44,17 @@ header {
     z-index: 1000;
 }
 
-p, h1, h2, h3, h4, h5, h6, label {
-    font-family: "figtree", sans-serif;
-    color: var(--brown-color);
+p, h3, h4, h5, h6, label {
+    color: var(--brown);
+}
+
+h1, h2 {
+    color: var(--brown-dark);
 }
 
 header h1, header h2{
     margin: 0px;
-    color: var(--white-color);
+    color: var(--cream);
 }
 
 h1 a {
@@ -57,7 +81,7 @@ header #date-container {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 2px;
-    background: var(--gray-color);
+    background: var(--background);
     padding: 2px;
     margin: 0px 20px 0px 20px;
     /* width: fit-content; */
@@ -68,22 +92,26 @@ header #date-container {
     /* width: 200px;
     height: 150px; */
     aspect-ratio: 4 / 3;
-    background: var(--white-color);
+    background: var(--cream);
     margin: 0px;
     cursor: pointer;
 }
 
 .cell.alt {
-    background: var(--alt-color);
-}
-
-.cell p {
-    margin: 4px;
-    color: var(--brown-color);
+    background: var(--cream-dark);
 }
 
 .cell:hover {
-    background: var(--hover-white-color);
+    background: var(--hover);
+}
+
+/* .cell.alt:hover {
+    background: var(--cream-dark-hover);
+} */
+
+.cell p {
+    margin: 4px;
+    color: var(--brown);
 }
 
 #event-container {
@@ -95,12 +123,25 @@ header #date-container {
 }
 
 section.event {
+    display: grid;
+    grid-template-columns: 1fr 8fr 1fr;
+
     width: 500px;
     text-align: center;
-    background-color: var(--alt-color);
-    border: 2px dashed var(--brown-color);
+    background-color: var(--cream);
+    border: 2px solid var(--border);
     border-radius: 8px;
     margin: 8px;
+}
+
+section.event .event-btn-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--cream-dark);
+    border-radius: 0px 5px 5px 0px;
 }
 
 #add-btn-container {
@@ -112,23 +153,33 @@ section.event {
 }
 
 #add-btn {
-    background-color: var(--white-color);
-    border: 2px solid var(--brown-color);
+    background-color: var(--cream);
+    border: 2px solid var(--brown);
     border-radius: 50%;
     aspect-ratio: 1 / 1;
     width: 50px;
 }
 
 #add-btn:hover {
-    background-color: var(--alt-color);
+    background-color: var(--cream-dark);
 }
 
-#add-btn svg {
-    fill: var(--brown-color);
+button svg {
+    fill: var(--brown);
+    cursor: pointer;
 }
 
-#confirm-event-btn svg, #confirm-edit-btn svg {
-    fill: var(--brown-color);
+.edit-event-btn, .del-event-btn {
+    background: none;
+    border: none;
+    border-radius: 5px;
+
+    width: 40px;
+    height: 40px;
+}
+
+.edit-event-btn:hover, .del-event-btn:hover {
+    background: var(--hover);
 }
 
 #confirm-event-btn-container, #confirm-edit-btn-container {
@@ -143,12 +194,12 @@ section.event {
     aspect-ratio: 1 / 1;
     width: 40px;
 
-    background-color: var(--white-color);
-    border-color: var(--brown-color);
+    background-color: var(--cream);
+    border-color: var(--brown);
 }
 
 #confirm-event-btn:hover, #confirm-edit-btn:hover {
-    background-color: var(--alt-color);
+    background-color: var(--cream-dark);
 }
 
 textarea {
@@ -173,7 +224,7 @@ textarea {
 }
 
 .modal-content {
-    background: var(--white-color);
+    background: var(--cream);
 
     display: flex;
     flex-direction: column;
@@ -181,6 +232,7 @@ textarea {
     padding: 20px;
 
     border-radius: 10px;
+    border: 2px solid var(--border);
 
     z-index: 2001;
 }
@@ -197,7 +249,7 @@ textarea {
     font-family: "Figtree", sans-serif;
     font-weight: bold;
     font-size: 24px;
-    color: var(--brown-color);
+    color: var(--brown-dark);
 
     background: none;
     border: none;
@@ -205,7 +257,7 @@ textarea {
 
 #title-input::placeholder, #title-edit-input::placeholder {
     font-weight: bold;
-    color: var(--brown-color);
+    color: var(--brown);
 }
 
 #title-input:focus, #title-edit-input:focus {
@@ -213,12 +265,37 @@ textarea {
 }
 
 #no-events {
-    background-color: var(--white-color);
-    border: 4px solid var(--brown-color);
+    background-color: var(--cream);
+    border: 2px solid var(--border);
 
-    padding: 5px;
+    padding: 10px;
 
     border-radius: 10px;
+}
+
+input, select {
+    background-color: white;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    padding: 5px;
+}
+
+input:active, select:active {
+    border-color: var(--brown);
+}
+
+.urgency-status {
+    width: 50px;
+    border-radius: 5px 0px 0px 5px;
+}
+
+.urgency-status.low {
+    background-color: var(--green);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 100px 1fr;
 }
 
 /* * {
