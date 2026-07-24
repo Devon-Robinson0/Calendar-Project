@@ -8,7 +8,7 @@ while (date.getFullYear() === year) {
     
     const newCell = document.createElement("div");
     newCell.classList.add("cell");
-    newCell.id = date.toLocaleDateString();
+    newCell.id = date.toLocaleDateString("en-US");
 
     if ((date.getMonth() + 1) % 2 !== 1) {
         newCell.classList.add("alt");
