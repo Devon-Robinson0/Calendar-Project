@@ -8,6 +8,7 @@ while (date.getFullYear() === year) {
     
     const newCell = document.createElement("div");
     newCell.classList.add("cell");
+    newCell.id = date.toLocaleDateString();
 
     if ((date.getMonth() + 1) % 2 !== 1) {
         newCell.classList.add("alt");
@@ -18,8 +19,14 @@ while (date.getFullYear() === year) {
 
     cellDate.textContent = String(date.getDate());
 
-    cellContainer.appendChild(newCell);
     newCell.appendChild(cellDate);
+    cellContainer.appendChild(newCell);
+
+    newCell.addEventListener("click", () => {
+        localStorage.setItem("currentDate", newCell.id);
+
+        window.location.href = "pages/date-page.html";
+    });
     
     date.setDate(date.getDate() + 1);
 }
