@@ -17,17 +17,16 @@ const confirmDelBtn = document.getElementById("confirm-del-btn");
 const cancelDelBtn = document.getElementById("cancel-del-btn");
 
 const currentDate = localStorage.getItem("currentDate");
-console.log(currentDate);
+
+let events = [];
+let currentIdSelected = 0;
+let isEditing = false;
 
 currentDateText.textContent = (new Date(currentDate)).toLocaleDateString("en-US", {
     day: "numeric",
     month: "long",
     year: "numeric"
 });
-
-let events = [];
-let currentIdSelected = 0;
-
 
 try {
     events = JSON.parse(localStorage.getItem("events") || "[]");
@@ -106,12 +105,6 @@ function updateEvents() {
     }
 }
 
-
-addBtn.addEventListener("click", () => {
-    resetModal();
-    createEventWindow.classList.toggle("show");
-});
-
 function resetModal() {
     titleInput.value = "New Event";
     timeInput.value = "";
@@ -120,7 +113,11 @@ function resetModal() {
     descriptionInput.value = "";
 }
 
-let isEditing = false;
+addBtn.addEventListener("click", () => {
+    resetModal();
+    createEventWindow.classList.toggle("show");
+});
+
 confirmEventBtn.addEventListener("click", () => {
     let eventToChange = {};
     if (isEditing) {
