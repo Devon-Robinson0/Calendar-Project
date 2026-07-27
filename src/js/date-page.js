@@ -16,6 +16,16 @@ const confirmDelWindow = document.getElementById("confirm-del-modal");
 const confirmDelBtn = document.getElementById("confirm-del-btn");
 const cancelDelBtn = document.getElementById("cancel-del-btn");
 
+// Swatch colours
+const swatchRed = document.getElementById("swatch-red");
+const swatchOrange = document.getElementById("swatch-orange");
+const swatchYellow = document.getElementById("swatch-yellow");
+const swatchGreen = document.getElementById("swatch-green");
+const swatchTeal = document.getElementById("swatch-teal");
+const swatchBlue = document.getElementById("swatch-blue");
+const swatchViolet = document.getElementById("swatch-violet");
+const swatchPink = document.getElementById("swatch-pink");
+
 const currentDate = localStorage.getItem("currentDate");
 
 let events = [];
@@ -45,7 +55,7 @@ function updateEvents() {
     for (const event of eventsOnDate) {
         const template = `
         <section id="event-${event.id}" class="event">
-            <div class="urgency-status low">
+            <div class="urgency-status ${event.colour}">
             </div>
             <div>
                 ${event.id}
@@ -111,6 +121,13 @@ function resetModal() {
     meridiamInput.value = "am";
     locationInput.value = "";
     descriptionInput.value = "";
+}
+
+function changeEventColour(colour) {
+    const selectedEvent = events.find(e => e.id === currentIdSelected);
+    console.log(selectedEvent);
+    selectedEvent.colour = colour;
+    console.log(selectedEvent.colour);
 }
 
 addBtn.addEventListener("click", () => {
@@ -180,5 +197,14 @@ confirmDelBtn.addEventListener("click", () => {
 cancelDelBtn.addEventListener("click", () => {
     confirmDelWindow.classList.remove("show");
 });
+
+swatchRed.addEventListener("click", () => { changeEventColour("red") });
+swatchOrange.addEventListener("click", () => { changeEventColour("orange") });
+swatchYellow.addEventListener("click", () => { changeEventColour("yellow") });
+swatchGreen.addEventListener("click", () => { changeEventColour("green") });
+swatchTeal.addEventListener("click", () => { changeEventColour("teal") });
+swatchBlue.addEventListener("click", () => { changeEventColour("blue") });
+swatchViolet.addEventListener("click", () => { changeEventColour("violet") });
+swatchPink.addEventListener("click", () => { changeEventColour("pink") });
 
 updateEvents();

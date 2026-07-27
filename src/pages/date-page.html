@@ -23,6 +23,17 @@
 
         <div id="create-event-modal" class="modal">
             <div class="modal-content">
+                <div id="event-colour-container">
+                    <button id="swatch-red" class="swatch red"></button>
+                    <button id="swatch-orange" class="swatch orange"></button>
+                    <button id="swatch-yellow" class="swatch yellow"></button>
+                    <button id="swatch-green" class="swatch green"></button>
+                    <button id="swatch-teal" class="swatch teal"></button>
+                    <button id="swatch-blue" class="swatch blue"></button>
+                    <button id="swatch-violet" class="swatch violet"></button>
+                    <button id="swatch-pink" class="swatch pink"></button>
+                </div>
+
                 <div class="form-row">
                     <h2><input id="title-input" type="text" value="New Event" /></h2>
                 </div>
@@ -52,32 +63,7 @@
                 </div>
             </div>
         </div>
-        <div id="edit-event-modal" class="modal">
-            <div class="modal-content">
-                <h2>
-                    <input id="title-edit-input" type="text" />
-                </h2>
-                
-                <div>
-                    <label>Time: 
-                        <input id="time-edit-input" type="text" placeholder="XX:XX" size="10"/>
-                    </label>
-                    <select id="meridiam-edit-input">
-                        <option value="am" selected>AM</option>
-                        <option value="pm">PM</option>
-                    </select>
-                </div>
-                <label>location: 
-                    <input id="location-edit-input" type="text" placeholder="enter location here" size="30"/>
-                </label>
-                <label for="description-edit-input">Description: </label>
-                <textarea id="description-edit-input" type="text" placeholder="enter Description here" size="40"></textarea>
-
-                <div id="confirm-edit-btn-container">
-                    <button id="confirm-edit-btn"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></button>
-                </div>
-            </div>
-        </div>
+    
         <div id="confirm-del-modal" class="modal">
             <div class="modal-content">
                 <h2>Confirm Delete: </h2>

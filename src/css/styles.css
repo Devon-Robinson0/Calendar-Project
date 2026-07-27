@@ -138,15 +138,11 @@ header #date-container {
 
 .banner {
     width: 100%;
+    border-radius: 5px;
 }
 
 .banner p {
     color: var(--cream);
-}
-
-.banner.green {
-    background-color: var(--green);
-    border-radius: 5px;
 }
 
 #event-container {
@@ -177,6 +173,49 @@ section.event .event-btn-container {
 
     background-color: var(--cream-dark);
     border-radius: 0px 5px 5px 0px;
+}
+
+#event-colour-container {
+    display: flex;
+    position: absolute;
+
+    top: 20px;
+    right: 20px;
+    gap: 5px;
+}
+
+.swatch {
+    border-radius: 6px;
+    width: 15px;
+    height: 15px;
+    border: none;
+
+    cursor: pointer;
+}
+
+.swatch.red {
+    background-color: var(--red);
+}
+.swatch.orange {
+    background-color: var(--orange);
+}
+.swatch.yellow {
+    background-color: var(--yellow);
+}
+.swatch.green {
+    background-color: var(--green);
+}
+.swatch.teal {
+    background-color: var(--teal);
+}
+.swatch.blue {
+    background-color: var(--blue);
+}
+.swatch.violet {
+    background-color: var(--violet);
+}
+.swatch.pink {
+    background-color: var(--pink);
 }
 
 #add-btn-container {
@@ -261,13 +300,6 @@ button.light-btn:hover {
     background-color: var(--cream-dark);
 }
 
-/* #confirm-del-modal {
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-} */
-
 textarea {
     width: 400px;
     height: 200px;
@@ -296,6 +328,7 @@ textarea {
     background: var(--cream);
 
     display: flex;
+    position: relative;
     flex-direction: column;
     gap: 10px;
     padding: 20px;
@@ -308,10 +341,6 @@ textarea {
 
 .modal.show {
     display: flex;
-}
-
-#edit-event-modal {
-    z-index: 4000;
 }
 
 #title-input, #title-edit-input {
@@ -360,8 +389,29 @@ input:focus, select:focus, textarea:focus {
     border-radius: 5px 0px 0px 5px;
 }
 
-.urgency-status.low {
+.urgency-status.red, .banner.red {
+    background-color: var(--red);
+}
+.urgency-status.orange, .banner.orange {
+    background-color: var(--orange);
+}
+.urgency-status.yellow, .banner.yellow {
+    background-color: var(--yellow);
+}
+.urgency-status.green, .banner.green {
     background-color: var(--green);
+}
+.urgency-status.teal, .banner.teal {
+    background-color: var(--teal);
+}
+.urgency-status.blue, .banner.blue {
+    background-color: var(--blue);
+}
+.urgency-status.violet, .banner.violet {
+    background-color: var(--violet);
+}
+.urgency-status.pink, .banner.pink {
+    background-color: var(--pink);
 }
 
 .form-row {
