@@ -28,6 +28,10 @@ const swatchPink = document.getElementById("swatch-pink");
 // Currently selected colour
 const selectedColour = document.getElementById("selected-colour");
 
+// Alert box
+const alertBox = document.getElementById("alert-box");
+const alertText = alertBox.querySelector("#alert-text");
+
 const currentDate = localStorage.getItem("currentDate");
 
 let events = [];
@@ -188,11 +192,49 @@ confirmEventBtn.addEventListener("click", () => {
 });
 
 timeInput.addEventListener("input", e => {
-    const regex = /^[0-9:]{1,5}$/; // acceptable values;
+    // Replace with valid values
+    if (!(/:/.test(timeInput.value))) {
+        timeInput.value = timeInput.value.replaceAll(" ", ":");
+    }
+    timeInput.value = timeInput.value.replace(/[^0-9:]/g, "");
+});
 
-    if ((timeInput.value[timeInput.value.length - 1]) === " ") {
-        const before = timeInput.value.slice(0, timeInput.value.length - 1);
-        timeInput.value = before + ":";
+timeInput.addEventListener("change", () => {
+    // Verify time
+    const match = timeInput.value.match(/(\d*):(\d*)/);
+
+    let hour = 0;
+    let mins = 0;
+    if (match) {
+        hour = Number(match[1]);
+        mins = Number(match[2]);
+        // console.log(hour);
+        // console.log(min);
+    } 
+    
+    // Verify hours & mins
+    try {
+        if (Number.isNaN(hour) || hour === undefined || hour === null) {
+            throw new Error("Hour and minutes must be numbers on either side of ':'");
+        }
+
+        if (hour < 1 || hour > 12) {
+            throw new Error("Hour must be between 1-12");
+        }
+
+        if (Number.isNaN(mins) || mins === undefined || mins === null) {
+            throw new Error("Hour and minutes must be numbers on either side of ':'");
+        }
+
+        if (mins < 1 || mins > 59) {
+            throw new Error("Minutes must be between 1-59");
+        }
+
+        alertBox.classList.remove("show");
+        alertText.textContent = "";
+    } catch (err) {
+        alertBox.classList.add("show");
+        alertText.textContent = err;
     }
 });
 
