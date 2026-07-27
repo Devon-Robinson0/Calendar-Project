@@ -11,15 +11,6 @@ const locationInput = document.getElementById("location-input");
 const descriptionInput = document.getElementById("description-input");
 const confirmEventBtn = document.getElementById("confirm-event-btn");
 
-// EDIT MODAL INPUTS
-const editEventWindow = document.getElementById("edit-event-modal");
-const titleEditValue = document.getElementById("title-edit-input");
-const timeEditValue = document.getElementById("time-edit-input");
-const meridiamEditValue = document.getElementById("meridiam-edit-input");
-const locationEditValue = document.getElementById("location-edit-input");
-const descriptionEditValue = document.getElementById("description-edit-input");
-const confirmEditBtn = document.getElementById("confirm-edit-btn");
-
 // DELETING EVENTS
 const confirmDelWindow = document.getElementById("confirm-del-modal");
 const confirmDelBtn = document.getElementById("confirm-del-btn");
@@ -37,6 +28,7 @@ currentDateText.textContent = (new Date(currentDate)).toLocaleDateString("en-US"
 let events = [];
 let currentIdSelected = 0;
 
+
 try {
     events = JSON.parse(localStorage.getItem("events") || "[]");
 } catch (error) {
@@ -45,8 +37,10 @@ try {
 }
 
 function updateEvents() {
-    const eventsOnDate = events.filter(event => event.date === currentDate);
+    localStorage.setItem("events", JSON.stringify(events));
 
+    const eventsOnDate = events.filter(event => event.date === currentDate);
+    console.log(eventsOnDate);
     eventContainer.innerHTML = "";
 
     for (const event of eventsOnDate) {
@@ -73,7 +67,25 @@ function updateEvents() {
 
     const editEventBtns = document.querySelectorAll(".edit-event-btn");
     for (const btn of editEventBtns) {
-        addListenerToEditBtn(btn);
+        btn.addEventListener("click", () => {
+            isEditing = true;
+
+            const closestSection = btn.closest("section")
+            const event = events.find(event => `event-${event.id}` === closestSection.id);
+
+            currentIdSelected = event.id;
+
+            const regex = /^(\d{1,2}:\d{2})/;
+
+            titleInput.value = event.title;
+            const match = event.time.match(regex);
+            timeInput.value = match === null ? "" : match[0];
+            meridiamInput.value = event.time.slice(event.time.length - 2) === "am" ? "am" : "pm";
+            locationInput.value = event.location;
+            descriptionInput.value = event.description;
+            
+            createEventWindow.classList.toggle("show");
+    });
     }
 
     const delEventBtns = document.querySelectorAll(".del-event-btn");
@@ -99,42 +111,47 @@ addBtn.addEventListener("click", () => {
     createEventWindow.classList.toggle("show");
 });
 
-// localStorage.removeItem("events");
-// localStorage.removeItem("nextEventId");
-
-
+let isEditing = false;
 confirmEventBtn.addEventListener("click", () => {
-    const newEvent = {}
+    let eventToChange = {};
+    if (isEditing) {
+        eventToChange = events.find(event => event.id === currentIdSelected);
+        console.log("Event im changing: ", eventToChange);
+    } else {
 
-    try {
-        console.log(localStorage.getItem("nextEventId"));
-        const nextId = Number(localStorage.getItem("nextEventId"));
+        // If not editing do things exclusive to creating new booking
+        try {
+            const nextId = Number(localStorage.getItem("nextEventId"));
+            console.log(nextId);
 
-        if (!Number.isNaN(nextId)) {
-            newEvent.id = nextId;
-        } else {
-            newEvent.id = 1;
+            if (Number.isNaN(nextId)) {
+                nextId = 1;
+            }
+            eventToChange.id = nextId;
+        } catch (err) {
+            eventToChange.id = 1;
         }
-    } catch (err) {
-        newEvent.id = 1;
+        localStorage.setItem("nextEventId", String(eventToChange.id + 1));
+
+        eventToChange.date = currentDate;
+        
     }
 
-    localStorage.setItem("nextEventId", ++newEvent.id);
+    eventToChange.title = titleInput.value;
+    eventToChange.time = `${timeInput.value}${meridiamInput.value}`;
+    eventToChange.location = locationInput.value;
+    eventToChange.description = descriptionInput.value;
 
-    newEvent.date = currentDate;
-    newEvent.title = titleInput.value;
-    newEvent.time = `${timeInput.value}${meridiamInput.value}`;
-    newEvent.location = locationInput.value;
-    newEvent.description = descriptionInput.value;
+    console.log("Event after being changed", eventToChange);
 
-    console.log(newEvent);
-
-    events.push(newEvent);
-    localStorage.setItem("events", JSON.stringify(events, "utf8"));
+    if (!isEditing) {
+        events.push(eventToChange);
+    }
 
     updateEvents();
 
     createEventWindow.classList.remove("show");
+    isEditing = false;
 });
 
 timeInput.addEventListener("input", e => {
@@ -144,44 +161,6 @@ timeInput.addEventListener("input", e => {
         const before = timeInput.value.slice(0, timeInput.value.length - 1);
         timeInput.value = before + ":";
     }
-});
-
-// for (const btn of editEventBtns) {
-//     addListenerToEditBtn(btn);
-// }
-
-function addListenerToEditBtn(editBtn) {
-    editBtn.addEventListener("click", () => {
-        const closestSection = editBtn.closest("section")
-        const event = events.find(event => `event-${event.id}` === closestSection.id);
-
-        currentIdSelected = event.id;
-
-        const regex = /^(\d{1,2}:\d{2})/;
-
-        titleEditValue.value = event.title;
-        const match = event.time.match(regex);
-        timeEditValue.value = match === null ? "" : match[0];
-        meridiamEditValue.value = event.time.slice(event.time.length - 2) === "am" ? "am" : "pm";
-        locationEditValue.value = event.location;
-        descriptionEditValue.value = event.description;
-        
-        editEventWindow.classList.toggle("show");
-    });
-}
-
-
-confirmEditBtn.addEventListener("click", () => {
-    const event = events.find(e => e.id === currentIdSelected);
-
-    event.title = titleEditValue.value;
-    event.time = `${timeEditValue.value}${meridiamEditValue.value}`;
-    event.location = locationEditValue.value;
-    event.description = descriptionEditValue.value;
-
-    updateEvents();
-
-    editEventWindow.classList.remove("show");
 });
 
 confirmDelBtn.addEventListener("click", () => {

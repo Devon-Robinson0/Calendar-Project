@@ -15,6 +15,8 @@
     --text-dark: #2F2A27;
     --text-light: #FAF8F3;
 
+    --accent: #2563EB;
+
     /* colours */
     --red: #B65C4A;
     --orange: #C77B49;
@@ -91,10 +93,20 @@ header #date-container {
 .cell {
     /* width: 200px;
     height: 150px; */
+    display: flex;
+    flex-direction: column;
+
     aspect-ratio: 4 / 3;
     background: var(--cream);
     margin: 0px;
     cursor: pointer;
+
+    box-sizing: border-box;
+}
+
+.cell.current-date {
+    border: 3px dashed var(--accent);
+    border-radius: 5px;
 }
 
 .cell.alt {
@@ -112,6 +124,29 @@ header #date-container {
 .cell p {
     margin: 4px;
     color: var(--brown);
+}
+
+.banner-container {
+    display: flex;
+    margin: auto 2px 2px 2px;
+    flex-direction: column;
+    gap: 2px;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.banner {
+    width: 100%;
+}
+
+.banner p {
+    color: var(--cream);
+}
+
+.banner.green {
+    background-color: var(--green);
+    border-radius: 5px;
 }
 
 #event-container {
@@ -169,6 +204,30 @@ button svg {
     cursor: pointer;
 }
 
+button.dark-btn {
+    background-color: var(--brown-dark);
+    border: 2px solid var(--brown-dark);
+    border-radius: 5px;
+
+    color: var(--cream);
+}
+
+button.dark-btn:hover {
+    background-color: var(--brown);
+}
+
+button.light-btn {
+    background-color: var(--cream);
+    border: 2px solid var(--brown-dark);
+    border-radius: 5px;
+
+    color: var(--brown-dark);
+}
+
+button.light-btn:hover {
+    background-color: var(--cream-dark);
+}
+
 .edit-event-btn, .del-event-btn {
     background: none;
     border: none;
@@ -202,10 +261,20 @@ button svg {
     background-color: var(--cream-dark);
 }
 
+/* #confirm-del-modal {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+} */
+
 textarea {
     width: 400px;
     height: 200px;
     resize: none;
+
+    border-width: 2px;
+    border-radius: 5px;
 }
 
 .modal {
@@ -280,8 +349,10 @@ input, select {
     padding: 5px;
 }
 
-input:active, select:active {
+input:focus, select:focus, textarea:focus {
+    outline: none;
     border-color: var(--brown);
+    /* outline: 2px solid var(--brown); */
 }
 
 .urgency-status {
