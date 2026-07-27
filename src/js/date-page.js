@@ -25,12 +25,15 @@ const swatchTeal = document.getElementById("swatch-teal");
 const swatchBlue = document.getElementById("swatch-blue");
 const swatchViolet = document.getElementById("swatch-violet");
 const swatchPink = document.getElementById("swatch-pink");
+// Currently selected colour
+const selectedColour = document.getElementById("selected-colour");
 
 const currentDate = localStorage.getItem("currentDate");
 
 let events = [];
 let currentIdSelected = 0;
 let isEditing = false;
+let selectedEventColour = "green";
 
 currentDateText.textContent = (new Date(currentDate)).toLocaleDateString("en-US", {
     day: "numeric",
@@ -89,6 +92,11 @@ function updateEvents() {
             titleInput.value = event.title;
             const match = event.time.match(regex);
             timeInput.value = match === null ? "" : match[0];
+            // Colour & swatches
+            selectedEventColour = event.colour;
+            selectedColour.className = event.colour;
+            
+
             meridiamInput.value = event.time.slice(event.time.length - 2) === "am" ? "am" : "pm";
             locationInput.value = event.location;
             descriptionInput.value = event.description;
@@ -123,16 +131,17 @@ function resetModal() {
     descriptionInput.value = "";
 }
 
-function changeEventColour(colour) {
-    const selectedEvent = events.find(e => e.id === currentIdSelected);
-    console.log(selectedEvent);
-    selectedEvent.colour = colour;
-    console.log(selectedEvent.colour);
+function changeColour(colour) {
+    selectedEventColour = colour; 
+    selectedColour.className = colour;
 }
 
 addBtn.addEventListener("click", () => {
     resetModal();
     createEventWindow.classList.toggle("show");
+
+    selectedEventColour = "green";
+    selectedColour.className = "green";
 });
 
 confirmEventBtn.addEventListener("click", () => {
@@ -159,6 +168,7 @@ confirmEventBtn.addEventListener("click", () => {
         eventToChange.date = currentDate;
         
     }
+    eventToChange.colour = selectedEventColour;
 
     eventToChange.title = titleInput.value;
     eventToChange.time = `${timeInput.value}${meridiamInput.value}`;
@@ -198,13 +208,13 @@ cancelDelBtn.addEventListener("click", () => {
     confirmDelWindow.classList.remove("show");
 });
 
-swatchRed.addEventListener("click", () => { changeEventColour("red") });
-swatchOrange.addEventListener("click", () => { changeEventColour("orange") });
-swatchYellow.addEventListener("click", () => { changeEventColour("yellow") });
-swatchGreen.addEventListener("click", () => { changeEventColour("green") });
-swatchTeal.addEventListener("click", () => { changeEventColour("teal") });
-swatchBlue.addEventListener("click", () => { changeEventColour("blue") });
-swatchViolet.addEventListener("click", () => { changeEventColour("violet") });
-swatchPink.addEventListener("click", () => { changeEventColour("pink") });
+swatchRed.addEventListener("click", () => { changeColour("red") });
+swatchOrange.addEventListener("click", () => { changeColour("orange") });
+swatchYellow.addEventListener("click", () => { changeColour("yellow") });
+swatchGreen.addEventListener("click", () => { changeColour("green") });
+swatchTeal.addEventListener("click", () => { changeColour("teal") });
+swatchBlue.addEventListener("click", () => { changeColour("blue") });
+swatchViolet.addEventListener("click", () => { changeColour("violet") });
+swatchPink.addEventListener("click", () => { changeColour("pink") });
 
 updateEvents();
