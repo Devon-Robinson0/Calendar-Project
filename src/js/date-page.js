@@ -38,8 +38,12 @@ const currentDate = localStorage.getItem("currentDate");
 let events = [];
 let currentIdSelected = 0;
 let isEditing = false;
-let isError = false;
 let selectedEventColour = "green";
+
+const errors = {
+    title: null,
+    time: null
+};
 
 currentDateText.textContent = (new Date(currentDate)).toLocaleDateString("en-US", {
     day: "numeric",
@@ -142,15 +146,14 @@ function changeColour(colour) {
     selectedColour.className = colour;
 }
 
-function displayAlert(err) {
-    isError = true;
+function updateAlert() {
+    const activeErrors = Object.values(errors).filter(Boolean);
 
-    alertBox.classList.add("show");
-    alertText.textContent = err;
-}
-
-function hideAlert() {
-    isError = false;
+    if (activeErrors.length > 0) {
+        alertBox.classList.add("show");
+        alertText.textContent = activeErrors[activeErrors.length - 1];
+        return;
+    }
 
     alertBox.classList.remove("show");
     alertText.textContent = "";
@@ -215,12 +218,14 @@ cancelEventBtn.addEventListener("click", () => {
 titleInput.addEventListener("change", () => {
     try {
         if (titleInput.value.trim() === "") {
-            throw new Error("You title must not be empty");
+            throw new Error("Your title must not be empty");
         }
 
-        hideAlert()
+        errors.title = null;
+        updateAlert();
     } catch (err) {
-        displayAlert(err);
+        errors.title = err;
+        updateAlert();
     }
 });
 
@@ -261,12 +266,15 @@ timeInput.addEventListener("change", () => {
                 throw new Error("Minutes must be between 1-59");
             }
 
-            hideAlert();
+            errors.time = null;
+            updateAlert();
         } catch (err) {
-            displayAlert(err);
+            errors.time = err;
+            updateAlert();
         }
     } else {
-        hideAlert();
+        errors.time = null;
+        updateAlert();
     }
 });
 
