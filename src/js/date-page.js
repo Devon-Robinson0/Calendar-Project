@@ -108,8 +108,17 @@ function updateEvents() {
 
 
 addBtn.addEventListener("click", () => {
+    resetModal();
     createEventWindow.classList.toggle("show");
 });
+
+function resetModal() {
+    titleInput.value = "New Event";
+    timeInput.value = "";
+    meridiamInput.value = "am";
+    locationInput.value = "";
+    descriptionInput.value = "";
+}
 
 let isEditing = false;
 confirmEventBtn.addEventListener("click", () => {
