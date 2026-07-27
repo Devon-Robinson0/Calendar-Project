@@ -10,6 +10,7 @@ const meridiamInput = document.getElementById("meridiam-input");
 const locationInput = document.getElementById("location-input");
 const descriptionInput = document.getElementById("description-input");
 const confirmEventBtn = document.getElementById("confirm-event-btn");
+const cancelEventBtn = document.getElementById("cancel-event-btn");
 
 // DELETING EVENTS
 const confirmDelWindow = document.getElementById("confirm-del-modal");
@@ -37,6 +38,7 @@ const currentDate = localStorage.getItem("currentDate");
 let events = [];
 let currentIdSelected = 0;
 let isEditing = false;
+let isError = false;
 let selectedEventColour = "green";
 
 currentDateText.textContent = (new Date(currentDate)).toLocaleDateString("en-US", {
@@ -140,6 +142,20 @@ function changeColour(colour) {
     selectedColour.className = colour;
 }
 
+function displayAlert(err) {
+    isError = true;
+
+    alertBox.classList.add("show");
+    alertText.textContent = err;
+}
+
+function hideAlert() {
+    isError = false;
+
+    alertBox.classList.remove("show");
+    alertText.textContent = "";
+}
+
 addBtn.addEventListener("click", () => {
     resetModal();
     createEventWindow.classList.toggle("show");
@@ -191,6 +207,23 @@ confirmEventBtn.addEventListener("click", () => {
     isEditing = false;
 });
 
+cancelEventBtn.addEventListener("click", () => {
+    createEventWindow.classList.remove("show");
+    isEditing = false;
+});
+
+titleInput.addEventListener("change", () => {
+    try {
+        if (titleInput.value.trim() === "") {
+            throw new Error("You title must not be empty");
+        }
+
+        hideAlert()
+    } catch (err) {
+        displayAlert(err);
+    }
+});
+
 timeInput.addEventListener("input", e => {
     // Replace with valid values
     if (!(/:/.test(timeInput.value))) {
@@ -213,28 +246,27 @@ timeInput.addEventListener("change", () => {
     } 
     
     // Verify hours & mins
-    try {
-        if (Number.isNaN(hour) || hour === undefined || hour === null) {
-            throw new Error("Hour and minutes must be numbers on either side of ':'");
-        }
+    if (!(timeInput.value === "")) {
+        try {
+            if (Number.isNaN(hour) || hour === undefined || hour === null) {
+                throw new Error("Hour and minutes must be numbers on either side of ':'");
+            }
+            if (hour < 1 || hour > 12) {
+                throw new Error("Hour must be between 1-12");
+            }
+            if (Number.isNaN(mins) || mins === undefined || mins === null) {
+                throw new Error("Hour and minutes must be numbers on either side of ':'");
+            }
+            if (mins < 0 || mins > 59) {
+                throw new Error("Minutes must be between 1-59");
+            }
 
-        if (hour < 1 || hour > 12) {
-            throw new Error("Hour must be between 1-12");
+            hideAlert();
+        } catch (err) {
+            displayAlert(err);
         }
-
-        if (Number.isNaN(mins) || mins === undefined || mins === null) {
-            throw new Error("Hour and minutes must be numbers on either side of ':'");
-        }
-
-        if (mins < 1 || mins > 59) {
-            throw new Error("Minutes must be between 1-59");
-        }
-
-        alertBox.classList.remove("show");
-        alertText.textContent = "";
-    } catch (err) {
-        alertBox.classList.add("show");
-        alertText.textContent = err;
+    } else {
+        hideAlert();
     }
 });
 
