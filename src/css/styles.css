@@ -59,6 +59,17 @@ header h1, header h2{
     color: var(--cream);
 }
 
+header h2 {
+    font-size: clamp(8px, 2vw, 36px);
+}
+
+header h2 {
+    color: var(--cream-dark);
+}
+.weekend {
+    color: var(--cream);
+}
+
 h1 a {
     all: unset;
     cursor: pointer;
@@ -66,9 +77,10 @@ h1 a {
 
 header #days-container {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    column-gap: 20px;
     text-align: center;
-    margin: 0px 20px 0px 20px;
+    margin: 0px 15px 0px 15px;
     padding: 10px;
 }
 
@@ -81,7 +93,7 @@ header #date-container {
 
 #cell-container {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 2px;
     background: var(--background);
     padding: 2px;
@@ -90,7 +102,7 @@ header #date-container {
     /* margin-inline: auto; */
 }
 
-.cell {
+.cell, .empty-cell {
     /* width: 200px;
     height: 150px; */
     display: flex;
@@ -102,6 +114,22 @@ header #date-container {
     cursor: pointer;
 
     box-sizing: border-box;
+    overflow: hidden;
+}
+
+.empty-cell {
+    background-color: gray;
+}
+
+.cell.weekend {
+    background:
+        repeating-linear-gradient(
+            45deg,
+            var(--cream),
+            var(--cream) 10px,
+            var(--cream-dark) 10px,
+            var(--cream-dark) 12px
+        );
 }
 
 .cell.current-date {
@@ -142,6 +170,11 @@ header #date-container {
 }
 
 .banner p {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: clamp(8px, 1vw, 14px);
+
     color: var(--cream);
 }
 
@@ -515,6 +548,20 @@ input:focus, select:focus, textarea:focus {
 
 #alert-text {
     color: var(--brown-dark);
+}
+
+#alert-box.flash {
+    animation: error-flash .4s ease-in 1;
+}
+
+@keyframes error-flash {
+    0%, 100% {
+        background-color: var(--cream-dark);
+    }
+
+    50% {
+        background-color: #ff6b6b;
+    }
 }
 
 /* * {

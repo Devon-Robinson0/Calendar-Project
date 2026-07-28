@@ -13,6 +13,19 @@ try {
 const year = new Date().getFullYear();
 let date = new Date(year, 0, 1);
 
+let dayOfWeek = date.getDay();
+if (dayOfWeek === 0) {
+    dayOfWeek = 7;
+}
+
+const emptyCellsAmount = Math.abs(1 - dayOfWeek);
+for (let i = 0; i < emptyCellsAmount; i++) {
+    const emptyCell = document.createElement("div");
+    emptyCell.classList.add("empty-cell");
+
+    cellContainer.appendChild(emptyCell);
+}
+
 while (date.getFullYear() === year) {
     // Create new cell
     const newCell = document.createElement("div");
@@ -22,7 +35,10 @@ while (date.getFullYear() === year) {
     // Apply styling to every second month
     if ((date.getMonth() + 1) % 2 !== 1) {
         newCell.classList.add("alt");
-        console.log(true);
+    }
+
+    if ((date.getDay() === 0 || date.getDay() === 6)) {
+        newCell.classList.add("weekend");
     }
 
     // Add number to represent date in month

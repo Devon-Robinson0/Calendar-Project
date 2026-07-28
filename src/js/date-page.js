@@ -168,6 +168,17 @@ addBtn.addEventListener("click", () => {
 });
 
 confirmEventBtn.addEventListener("click", () => {
+    const activeErrors = Object.values(errors).filter(Boolean);
+    if (activeErrors.length > 0) {
+        if (!alertBox.classList.contains("flash")) {
+            alertBox.classList.toggle("flash");
+            setTimeout(() => {
+                alertBox.classList.toggle("flash");
+            }, 500);
+        }
+        return;
+    }
+
     let eventToChange = {};
     if (isEditing) {
         eventToChange = events.find(event => event.id === currentIdSelected);
@@ -207,12 +218,14 @@ confirmEventBtn.addEventListener("click", () => {
     updateEvents();
 
     createEventWindow.classList.remove("show");
-    isEditing = false;
 });
 
 cancelEventBtn.addEventListener("click", () => {
+    for (const err in errors) {
+        errors[err] = null;
+    }
+    updateAlert();
     createEventWindow.classList.remove("show");
-    isEditing = false;
 });
 
 titleInput.addEventListener("change", () => {
