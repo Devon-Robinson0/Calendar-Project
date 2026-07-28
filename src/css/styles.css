@@ -5,6 +5,8 @@
 
     --cream: #F5F1E8;
     --cream-dark: #E7DED0;
+    --cream-texture: #EAE2D5;
+    --cream-dark-texture: #DCCFBD;
 
     --hover: #DCCDB7;
 
@@ -118,19 +120,20 @@ header #date-container {
 }
 
 .empty-cell {
-    background-color: gray;
+    background-color: var(--background);
 }
 
-.cell.weekend {
+/* .cell.weekend {
     background:
         repeating-linear-gradient(
             45deg,
             var(--cream),
             var(--cream) 10px,
-            var(--cream-dark) 10px,
-            var(--cream-dark) 12px
+            var(--cream-texture) 10px,
+            var(--cream-texture) 15px
         );
-}
+    background-color: var(--cream-texture);
+} */
 
 .cell.current-date {
     border: 3px dashed var(--accent);
@@ -140,6 +143,18 @@ header #date-container {
 .cell.alt {
     background: var(--cream-dark);
 }
+/* 
+.cell.alt.weekend {
+    background:
+        repeating-linear-gradient(
+            45deg,
+            var(--cream-dark),
+            var(--cream-dark) 10px,
+            var(--cream-dark-texture) 10px,
+            var(--cream-dark-texture) 15px
+        );
+    background-color: var(--cream-dark-texture);
+} */
 
 .cell:hover {
     background: var(--hover);

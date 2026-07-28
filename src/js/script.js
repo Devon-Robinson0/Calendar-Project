@@ -18,7 +18,7 @@ if (dayOfWeek === 0) {
     dayOfWeek = 7;
 }
 
-const emptyCellsAmount = Math.abs(1 - dayOfWeek);
+let emptyCellsAmount = Math.abs(1 - dayOfWeek);
 for (let i = 0; i < emptyCellsAmount; i++) {
     const emptyCell = document.createElement("div");
     emptyCell.classList.add("empty-cell");
@@ -79,6 +79,19 @@ while (date.getFullYear() === year) {
     
     // iterate and loop back
     date.setDate(date.getDate() + 1);
+}
+
+dayOfWeek = date.getDay() - 1;
+if (dayOfWeek === 0) {
+    dayOfWeek = 7;
+}
+
+emptyCellsAmount = 7 - dayOfWeek;
+for (let i = 0; i < emptyCellsAmount; i++) {
+    const emptyCell = document.createElement("div");
+    emptyCell.classList.add("empty-cell");
+
+    cellContainer.appendChild(emptyCell);
 }
 
 function createBanner(event, cell, container) {
