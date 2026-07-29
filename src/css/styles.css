@@ -380,7 +380,7 @@ button.light-btn:hover {
     background: var(--hover);
 }
 
-#confirm-event-btn-container{
+#confirm-event-btn-container, .btn-container{
     display: flex;
     
     align-items: center;
@@ -411,7 +411,7 @@ button.light-btn:hover {
     gap: 10px;
 }
 
-#cancel-event-btn {
+#cancel-event-btn, #cancel-upload-btn {
     border-radius: 5px;
 
     aspect-ratio: 5 / 2;
@@ -422,7 +422,7 @@ button.light-btn:hover {
     color: var(--brown-dark);
 }
 
-#cancel-event-btn:hover {
+#cancel-event-btn:hover, #cancel-upload-btn:hover {
     background-color: var(--brown-light);
     color: var(--cream);
 }
@@ -577,6 +577,26 @@ input:focus, select:focus, textarea:focus {
     50% {
         background-color: #ff6b6b;
     }
+}
+
+#upload-btn-container {
+    position: fixed;
+
+    bottom: 20px;
+    left: 25px;
+}
+
+#upload-btn {
+    border-radius: 50%;
+    aspect-ratio: 1 / 1;
+    width: 50px;
+
+    background-color: var(--cream);
+    border: 2px solid var(--brown);
+}
+
+#upload-btn:hover {
+    background-color: var(--cream-dark);
 }
 
 /* * {

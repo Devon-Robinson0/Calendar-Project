@@ -1,4 +1,11 @@
 const cellContainer = document.getElementById("cell-container");
+
+// Upload ical
+const uploadBtn = document.getElementById("upload-btn");
+const uploadModal = document.getElementById("upload-modal");
+const cancelUploadBtn = document.getElementById("cancel-upload-btn");
+const icalInput = document.getElementById("ical-input");
+
 // localStorage.removeItem("events");
 
 let events = [];
@@ -118,4 +125,28 @@ currentDateCell.classList.add("current-date");
 currentDateCell.scrollIntoView({
     behavior: "smooth", // or "smooth"
     block: "center"      // "start", "center", "end", "nearest"
+});
+
+uploadBtn.addEventListener("click", ()=> {
+    uploadModal.classList.add("show");
+});
+
+cancelUploadBtn.addEventListener("click", () => {
+    uploadModal.classList.remove("show");
+});
+
+icalInput.addEventListener("change", async event => {
+    const file = event.target.files[0];
+
+    if (!file) return;
+    console.log("name", file.name);
+
+    if (!file.name.endsWith(".ics")) {
+        console.log("Wrong file type");
+        icalInput.value = "";
+        return;
+    }
+
+    const content = await file.text();
+    console.log(content);
 });
