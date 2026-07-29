@@ -209,32 +209,7 @@ icalInput.addEventListener("change", async event => {
 
 setTimeout(() => {
     window.addEventListener("scroll", () => {
-        const centerX = window.innerWidth / 2;
-        const centerY = window.innerHeight / 2;
-
-        const element = document.elementFromPoint(centerX, centerY)
-            ?.closest(".cell");
-        
-        if (!element) return;
-
-        // regex
-        const monthRegex = /^(\d{1,2})\//;
-        const yearRegex = /(\d{4}$)/;
-
-        const monthNum = Number(element?.id.match(monthRegex)[1]);
-        const month = convertNumToMonth(monthNum);
-
-        const year = element?.id.match(yearRegex)[1];
-        hoverMonthText.textContent = `${month}, ${year}`;
-
-        if (monthsWithin(monthNum, date.getMonth() + 1 , 2)) {
-            console.log("Adding Months");
-            createCellsWithinRange(startingEarilestDate, 
-                currentLatestDate.setMonth(currentLatestDate.getMonth() + 3));
-
-            const allCells = document.querySelectorAll(".cell");
-            console.log(allCells.length);
-        }
+        checkForNewMonths();
     });
 }, 2000);
 
@@ -245,3 +220,34 @@ function monthsWithin(month1, month2, dist) {
 
     return Math.min(diff, wrappedDiff) <= dist;
 }
+
+function checkForNewMonths() {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+
+    const element = document.elementFromPoint(centerX, centerY)
+        ?.closest(".cell");
+    
+    if (!element) return;
+
+    // regex
+    const monthRegex = /^(\d{1,2})\//;
+    const yearRegex = /(\d{4}$)/;
+
+    const monthNum = Number(element?.id.match(monthRegex)[1]);
+    const month = convertNumToMonth(monthNum);
+
+    const year = element?.id.match(yearRegex)[1];
+    hoverMonthText.textContent = `${month}, ${year}`;
+
+    if (monthsWithin(monthNum, date.getMonth() + 1 , 2)) {
+        console.log("Adding Months");
+        createCellsWithinRange(startingEarilestDate, 
+            currentLatestDate.setMonth(currentLatestDate.getMonth() + 3));
+
+        const allCells = document.querySelectorAll(".cell");
+        console.log(allCells.length);
+    }
+}
+
+checkForNewMonths();
