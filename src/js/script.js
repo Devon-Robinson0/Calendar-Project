@@ -6,6 +6,9 @@ const uploadModal = document.getElementById("upload-modal");
 const cancelUploadBtn = document.getElementById("cancel-upload-btn");
 const icalInput = document.getElementById("ical-input");
 
+// Hover text for month
+const hoverMonthText = document.getElementById("hovering-month-text");
+
 // localStorage.removeItem("events");
 
 let events = [];
@@ -17,8 +20,18 @@ try {
 }
 
 // Get date starting from jan 1st current year
-const year = new Date().getFullYear();
-let date = new Date(year, 0, 1);
+// const year = new Date().getFullYear();
+// let date = new Date(year, 0, 1);
+
+const currentDate = new Date();
+const earilestDate = new Date();
+const latestDate = new Date();
+earilestDate.setDate(currentDate.getDate() - 182);
+latestDate.setDate(currentDate.getDate() + 183);
+console.log(earilestDate);
+console.log(latestDate);
+
+let date = new Date(earilestDate);
 
 let dayOfWeek = date.getDay();
 if (dayOfWeek === 0) {
@@ -33,7 +46,7 @@ for (let i = 0; i < emptyCellsAmount; i++) {
     cellContainer.appendChild(emptyCell);
 }
 
-while (date.getFullYear() === year) {
+while (date >= earilestDate && date <= latestDate) {
     // Create new cell
     const newCell = document.createElement("div");
     newCell.classList.add("cell");
@@ -119,8 +132,8 @@ for (const cell of cells) {
     cell.classList.remove("current-date");
 }
 
-const currentDate = (new Date()).toLocaleDateString("en-US");
-const currentDateCell = document.getElementById(currentDate);
+const currentDateId = currentDate.toLocaleDateString("en-US");
+const currentDateCell = document.getElementById(currentDateId);
 currentDateCell.classList.add("current-date");
 currentDateCell.scrollIntoView({
     behavior: "smooth", // or "smooth"
@@ -150,3 +163,63 @@ icalInput.addEventListener("change", async event => {
     const content = await file.text();
     console.log(content);
 });
+
+window.addEventListener("scroll", () => {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+
+    const element = document.elementFromPoint(centerX, centerY)
+        ?.closest(".cell");
+    
+    if (!element) return;
+
+    const monthRegex = /^(\d{1,2})\//;
+    const monthNum = Number(element?.id.match(monthRegex)[1]);
+    console.log(monthNum);
+    const month = convertNumToMonth(monthNum);
+    hoverMonthText.textContent = month;
+});
+
+function convertNumToMonth(num) {
+    let month = "";
+    switch (num) {
+        case 1 :
+            month = "January";
+            break;
+        case 2 :
+            month = "Febuary";
+            break;
+        case 3 :
+            month = "March";
+            break;
+        case 4 :
+            month = "April";
+            break;
+        case 5 :
+            month = "May";
+            break;
+        case 6 :
+            month = "June";
+            break;
+        case 7 :
+            month = "July";
+            break;
+        case 8 :
+            month = "August";
+            break;
+        case 9 :
+            month = "September";
+            break;
+        case 10 :
+            month = "October";
+            break;
+        case 11 :
+            month = "November";
+            break;
+        case 12 :
+            month = "December";
+            break;
+    }
+
+    return month;
+}
