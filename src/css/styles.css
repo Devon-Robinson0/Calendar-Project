@@ -428,8 +428,8 @@ button.light-btn:hover {
 }
 
 textarea {
-    width: 400px;
-    height: 200px;
+    width: 1fr;
+    height: 100px;
     resize: none;
 
     border-width: 2px;
@@ -513,6 +513,22 @@ input:focus, select:focus, textarea:focus {
 
 input:disabled {
     background-color: var(--hover);
+}
+
+input[type="checkbox"] {
+    margin: 0px;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    background: white;
+    cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+    border: 2px solid var(--brown);
+    background-color: var(--brown-light);
 }
 
 .urgency-status {
@@ -674,6 +690,39 @@ input:disabled {
 
 #time-finish-type:hover {
     background-color: var(--cream-dark);
+}
+
+.event h3 svg{
+    fill: var(--brown);
+    height: 100%;
+}
+
+.event h3 {
+    display: inline-flex;
+    margin: 0px;
+}
+
+.event-information .time-container {
+
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+
+    padding: 0px;
+    gap: 8px;
+    /* width: fit-content; */
+}
+
+.event-information {
+    min-width: 0;
+    padding: 5px;
+}
+
+.event-information p {
+    white-space: normal;
+    overflow-wrap: break-word;
+    text-overflow: ellipsis;
+    word-break: break-word; /* fallback for older browsers */
 }
 
 /* #duration-input {

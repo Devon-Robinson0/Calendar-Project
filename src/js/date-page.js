@@ -83,17 +83,23 @@ function updateEvents() {
     console.log(eventsOnDate);
     eventContainer.innerHTML = "";
 
+
     for (const event of eventsOnDate) {
+        const timeString = event.allDayCheckbox ? "All Day" : `${event.startDate}<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m560-240-56-58 142-142H160v-80h486L504-662l56-58 240 240-240 240Z"/></svg>${event.endDate}`;
+        console.log(event.allDayCheckbox);
+
         const template = `
         <section id="event-${event.id}" class="event">
             <div class="urgency-status ${event.colour}">
             </div>
-            <div>
+            <div class="event-information">
                 ${event.id}
                 <h2>${event.title}</h2>
-                <h3>Time: ${event.startTime || "_"}</h3>
+                <div class="time-container">
+                    <h3>${timeString}</h3>
+                </div>
                 <h3>location: ${event.location || "_"}</h3>
-                <p>${event.description || "_"}</p>
+                <p class="event-description">${event.description || "_"}</p>
             </div>
 
             <div class="event-btn-container">
@@ -161,10 +167,17 @@ function updateEvents() {
 
 function resetModal() {
     titleInput.value = "New Event";
+    startDate.value = currentDate;
+    endDate.value = currentDate;
     timeStartInput.value = "";
     meridiamStartInput.value = "am";
+    timeEndInput.value = "";
+    meridiamEndInput.value = "am";
     locationInput.value = "";
     descriptionInput.value = "";
+
+    selectedEventColour = "green";
+    selectedColour.className = "green";
 }
 
 function changeColour(colour) {
@@ -204,12 +217,6 @@ function convertHoursToMins(hours) {
 addBtn.addEventListener("click", () => {
     resetModal();
     createEventWindow.classList.toggle("show");
-
-    selectedEventColour = "green";
-    selectedColour.className = "green";
-
-    startDate.value = currentDate;
-    endDate.value = currentDate;
 });
 
 confirmEventBtn.addEventListener("click", () => {
