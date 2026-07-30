@@ -118,14 +118,22 @@ function updateEvents() {
             const regex = /^(\d{1,2}:\d{2})/;
 
             titleInput.value = event.title;
-            const match = event.startTime.match(regex);
-            timeStartInput.value = match === null ? "" : match[0];
+            startDate.value = event.startDate;
+            endDate.value = event.endDate;
+            allDayCheckbox.value = event.allDayCheckbox;
+            if (!event.allDayCheckbox) {
+                let match = event.startTime.match(regex);
+                timeStartInput.value = match === null ? "" : match[0];
+                match = event.endTime.match(regex);
+                timeEndInput.value = match === null ? "" : match[0]
+
+                meridiamStartInput.value = event.startTime.slice(event.startTime.length - 2) === "am" ? "am" : "pm";
+                meridiamEndInput.value = event.endTime.slice(event.startTime.length - 2) === "am" ? "am" : "pm";
+            }
+            
             // Colour & swatches
             selectedEventColour = event.colour;
             selectedColour.className = event.colour;
-            
-
-            meridiamStartInput.value = event.startTime.slice(event.startTime.length - 2) === "am" ? "am" : "pm";
             locationInput.value = event.location;
             descriptionInput.value = event.description;
             

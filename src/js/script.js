@@ -1,4 +1,5 @@
 const cellContainer = document.getElementById("cell-container");
+// localStorage.removeItem("events");
 
 // Upload ical
 const uploadBtn = document.getElementById("upload-btn");
@@ -64,9 +65,11 @@ function createCellsWithinRange(earliestDate, latestDate) {
         cellDate.textContent = String(date.getDate());
         newCell.appendChild(cellDate);
 
-        // Find events for current date
-        const eventsOnDate = events.filter(event => event.date === date.toLocaleDateString("en-US"));
+        const currentDateAsDate = new Date(date.toISOString().split("T")[0]);
 
+        // Find events for current date
+        const eventsOnDate = events.filter(event => new Date(event.startDate) <= currentDateAsDate && new Date(event.endDate) >= currentDateAsDate);
+        // console.log(eventsOnDate);
         // Create container for banners
         const bannerContainer = document.createElement("div");
         bannerContainer.classList.add("banner-container");
@@ -231,8 +234,8 @@ function checkForNewMonths() {
     if (!element) return;
 
     // regex
-    const monthRegex = /^(\d{1,2})\//;
-    const yearRegex = /(\d{4}$)/;
+    const monthRegex = /^\d{4}-(\d{2})-\d{2}$/;
+    const yearRegex = /^(\d{4})/;
 
     const monthNum = Number(element?.id.match(monthRegex)[1]);
     const month = convertNumToMonth(monthNum);
