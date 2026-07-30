@@ -5,8 +5,23 @@ const addBtn = document.getElementById("add-btn");
 // CREATE MODAL INPUTS
 const createEventWindow = document.getElementById("create-event-modal");
 const titleInput = document.getElementById("title-input");
-const timeInput = document.getElementById("time-input");
-const meridiamInput = document.getElementById("meridiam-input");
+const timeStartInput = document.getElementById("time-start-input");
+// Date inputs
+const startDate = document.getElementById("start-date");
+const endDate = document.getElementById("end-date");
+
+// all day checkbox
+const allDayCheckbox = document.getElementById("all-day-checkbox");
+
+// time options - duration
+// const durationInput = document.getElementById("duration-input");
+// durationInput.disabled = true;
+// time options - to
+const timeFinishType = document.getElementById("time-finish-type");
+const meridiamStartInput = document.getElementById("meridiam-start-input");
+const timeEndInput = document.getElementById("time-end-input");
+const meridiamEndInput = document.getElementById("meridiam-end-input");
+// rest
 const locationInput = document.getElementById("location-input");
 const descriptionInput = document.getElementById("description-input");
 const confirmEventBtn = document.getElementById("confirm-event-btn");
@@ -42,7 +57,9 @@ let selectedEventColour = "green";
 
 const errors = {
     title: null,
-    time: null
+    startTime: null,
+    startDate: null,
+    endDate: null
 };
 
 currentDateText.textContent = (new Date(currentDate)).toLocaleDateString("en-US", {
@@ -61,7 +78,8 @@ try {
 function updateEvents() {
     localStorage.setItem("events", JSON.stringify(events));
 
-    const eventsOnDate = events.filter(event => event.date === currentDate);
+    const currentDateAsDate = new Date(currentDate);
+    const eventsOnDate = events.filter(event => new Date(event.startDate) <= currentDateAsDate && new Date(event.endDate) >= currentDateAsDate);
     console.log(eventsOnDate);
     eventContainer.innerHTML = "";
 
@@ -73,7 +91,7 @@ function updateEvents() {
             <div>
                 ${event.id}
                 <h2>${event.title}</h2>
-                <h3>Time: ${event.time || "_"}</h3>
+                <h3>Time: ${event.startTime || "_"}</h3>
                 <h3>location: ${event.location || "_"}</h3>
                 <p>${event.description || "_"}</p>
             </div>
@@ -100,14 +118,14 @@ function updateEvents() {
             const regex = /^(\d{1,2}:\d{2})/;
 
             titleInput.value = event.title;
-            const match = event.time.match(regex);
-            timeInput.value = match === null ? "" : match[0];
+            const match = event.startTime.match(regex);
+            timeStartInput.value = match === null ? "" : match[0];
             // Colour & swatches
             selectedEventColour = event.colour;
             selectedColour.className = event.colour;
             
 
-            meridiamInput.value = event.time.slice(event.time.length - 2) === "am" ? "am" : "pm";
+            meridiamStartInput.value = event.startTime.slice(event.startTime.length - 2) === "am" ? "am" : "pm";
             locationInput.value = event.location;
             descriptionInput.value = event.description;
             
@@ -135,8 +153,8 @@ function updateEvents() {
 
 function resetModal() {
     titleInput.value = "New Event";
-    timeInput.value = "";
-    meridiamInput.value = "am";
+    timeStartInput.value = "";
+    meridiamStartInput.value = "am";
     locationInput.value = "";
     descriptionInput.value = "";
 }
@@ -159,12 +177,31 @@ function updateAlert() {
     alertText.textContent = "";
 }
 
+function isLeapYear(year) {
+    return ((year % 4 === 0) && !(year % 100 === 0)) || (year % 400 === 0);
+}
+
+function replaceSpaceWithColon(input) {
+    // Replace with valid values
+    if (!(/:/.test(input.value))) {
+        input.value = input.value.replaceAll(" ", ":");
+    }
+    input.value = input.value.replace(/[^0-9:]/g, "");
+}
+
+function convertHoursToMins(hours) {
+    return Math.floor(hours / 60) + (hours % 60);
+}
+
 addBtn.addEventListener("click", () => {
     resetModal();
     createEventWindow.classList.toggle("show");
 
     selectedEventColour = "green";
     selectedColour.className = "green";
+
+    startDate.value = currentDate;
+    endDate.value = currentDate;
 });
 
 confirmEventBtn.addEventListener("click", () => {
@@ -179,6 +216,7 @@ confirmEventBtn.addEventListener("click", () => {
         return;
     }
 
+    // Create event / set event to one being edited
     let eventToChange = {};
     if (isEditing) {
         eventToChange = events.find(event => event.id === currentIdSelected);
@@ -197,15 +235,20 @@ confirmEventBtn.addEventListener("click", () => {
         } catch (err) {
             eventToChange.id = 1;
         }
-        localStorage.setItem("nextEventId", String(eventToChange.id + 1));
-
-        eventToChange.date = currentDate;
-        
+        localStorage.setItem("nextEventId", String(eventToChange.id + 1));        
     }
     eventToChange.colour = selectedEventColour;
 
     eventToChange.title = titleInput.value;
-    eventToChange.time = `${timeInput.value}${meridiamInput.value}`;
+    eventToChange.startDate = startDate.value;
+    eventToChange.endDate = endDate.value;
+    eventToChange.allDayCheckbox = allDayCheckbox.checked;
+    eventToChange.startTime = null;
+    eventToChange.endTime = null;
+    if (!allDayCheckbox.checked) {
+        eventToChange.startTime = `${timeStartInput.value}${meridiamStartInput.value}`;
+        eventToChange.endTime = `${timeEndInput.value}${meridiamEndInput.value}`;
+    }
     eventToChange.location = locationInput.value;
     eventToChange.description = descriptionInput.value;
 
@@ -242,17 +285,25 @@ titleInput.addEventListener("change", () => {
     }
 });
 
-timeInput.addEventListener("input", e => {
-    // Replace with valid values
-    if (!(/:/.test(timeInput.value))) {
-        timeInput.value = timeInput.value.replaceAll(" ", ":");
-    }
-    timeInput.value = timeInput.value.replace(/[^0-9:]/g, "");
+timeStartInput.addEventListener("input", e => {
+    replaceSpaceWithColon(timeStartInput);
 });
 
-timeInput.addEventListener("change", () => {
+timeEndInput.addEventListener("input", e => {
+    replaceSpaceWithColon(timeEndInput);
+});
+
+timeStartInput.addEventListener("change", () => {
+    validateTimeInput(timeStartInput, "startTime");
+});
+
+timeEndInput.addEventListener("change", () => {
+    validateTimeInput(timeEndInput, "endTime");
+});
+
+function validateTimeInput(input, errorKey) {
     // Verify time
-    const match = timeInput.value.match(/(\d*):(\d*)/);
+    const match = input.value.match(/(\d*):(\d*)/);
 
     let hour = 0;
     let mins = 0;
@@ -264,7 +315,7 @@ timeInput.addEventListener("change", () => {
     } 
     
     // Verify hours & mins
-    if (!(timeInput.value === "")) {
+    if (!(input.value === "")) {
         try {
             if (Number.isNaN(hour) || hour === undefined || hour === null) {
                 throw new Error("Hour and minutes must be numbers on either side of ':'");
@@ -279,17 +330,76 @@ timeInput.addEventListener("change", () => {
                 throw new Error("Minutes must be between 1-59");
             }
 
-            errors.time = null;
+            errors[errorKey] = null;
             updateAlert();
         } catch (err) {
-            errors.time = err;
+            errors[errorKey] = err;
             updateAlert();
         }
     } else {
-        errors.time = null;
+        errors[errorKey] = null;
         updateAlert();
     }
-});
+}
+
+// durationInput.addEventListener("change", () => {
+//     // Verify time
+//     const match = durationInput.value.match(/(\d*):(\d*)/);
+
+//     const hourRegex = /^(\d{1,2})/;
+//     const minsRegex = /(\d{1,2})/;
+//     const hourAmount = Number(timeStartInput.value.match(hourRegex)[1]);
+//     const minsAmount = Number(timeStartInput.value.match(minsRegex)[1]);
+
+//     let totalMins = convertHoursToMins(hourAmount) + minsAmount;
+//     // 1440
+//     if (meridiamStartInput.value === "pm") {
+//         totalMins += 720;
+//     }
+
+//     const maxMins = 1440 - totalMins;
+//     console.log(maxMins);
+
+//     let hour = 0;
+//     let mins = 0;
+//     if (match) {
+//         hour = Number(match[1]);
+//         mins = Number(match[2]);
+//         // console.log(hour);
+//         // console.log(min);
+//     } 
+    
+//     // Verify hours & mins
+//     if (!(durationInput.value === "")) {
+//         try {
+//             if (Number.isNaN(hour) || hour === undefined || hour === null) {
+//                 throw new Error("Hour and minutes must be numbers on either side of ':'");
+//             }
+//             if (convertHoursToMins(hour) + mins > maxMins) {
+//                 throw new Error("Duration must fit within current day");
+//             }
+//             if (hour < 1 || hour > 12) {
+//                 throw new Error("Hour must be between 1-12");
+//             }
+//             if (Number.isNaN(mins) || mins === undefined || mins === null) {
+//                 throw new Error("Hour and minutes must be numbers on either side of ':'");
+//             }
+//             if (mins < 0 || mins > 59) {
+//                 throw new Error("Minutes must be between 1-59");
+//             }
+            
+
+//             errors.time = null;
+//             updateAlert();
+//         } catch (err) {
+//             errors.time = err;
+//             updateAlert();
+//         }
+//     } else {
+//         errors.time = null;
+//         updateAlert();
+//     }
+// });
 
 confirmDelBtn.addEventListener("click", () => {
     events = events.filter(event => event.id !== currentIdSelected);
@@ -302,6 +412,58 @@ confirmDelBtn.addEventListener("click", () => {
 cancelDelBtn.addEventListener("click", () => {
     confirmDelWindow.classList.remove("show");
 });
+
+startDate.addEventListener("change", () => {
+    try {
+        if (!startDate.checkValidity()) {
+            throw new Error("Start date is not valid");
+        }
+
+        errors.startDate = null;
+        updateAlert();
+    } catch (err) {
+        errors.startDate = err;
+        updateAlert();
+    }
+});
+
+endDate.addEventListener("change", () => {
+    try {
+        if (!endDate.checkValidity()) {
+            throw new Error("End date is not valid");
+        }
+        const start = new Date(startDate.value);
+        const end = new Date(endDate.value);
+        if (end < start) {
+            throw new Error("End date must be after start date");
+        }
+
+        errors.endDate = null;
+        updateAlert();
+    } catch (err) {
+        errors.endDate = err;
+        updateAlert();
+    }
+});
+
+allDayCheckbox.addEventListener("click", () => {
+    if (allDayCheckbox.checked) {
+        timeStartInput.disabled = true;
+        timeEndInput.disabled = true;
+        meridiamStartInput.disabled = true;
+        meridiamEndInput.disabled = true;
+        timeFinishType.disabled = true;
+    } else {
+        timeStartInput.disabled = false;
+        timeEndInput.disabled = false;
+        meridiamStartInput.disabled = false;
+        meridiamEndInput.disabled = false;
+        timeFinishType.disabled = false;
+    }
+});
+
+startDate.value = currentDate;
+endDate.value = currentDate;
 
 swatchRed.addEventListener("click", () => { changeColour("red") });
 swatchOrange.addEventListener("click", () => { changeColour("orange") });

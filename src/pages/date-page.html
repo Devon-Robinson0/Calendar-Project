@@ -41,12 +41,42 @@
                 <div class="form-row">
                     <h2><input id="title-input" type="text" value="New Event" /></h2>
                 </div>
+
+                <div class="form-row">
+                        <label for="start-date">Date: </label>
+                    <div id="date-range" class="inline-column">
+                        <input id="start-date" type="date" />
+                        <label for="end-date">--></label>
+                        <input id="end-date" type="date" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label for="all-day-checkbox">All-Day: </label>
+                    <input id="all-day-checkbox" type="checkbox" />
+                </div>
                 
                 <div class="form-row">
-                    <label for="time-input">Time:</label>
-                    <div>
-                        <input id="time-input" type="text" placeholder="XX:XX" size="10"/>
-                        <select id="meridiam-input">
+                    <label for="time-start-input">Time:</label>
+                    <div class="inline-column">
+                        <div id="start-time-container">
+                            <input id="time-start-input" type="text" placeholder="XX:XX" size="10"/>
+                            <select id="meridiam-start-input">
+                                <option value="am" selected>AM</option>
+                                <option value="pm">PM</option>
+                            </select>
+                        </div>
+                        <select id="time-finish-type">
+                            <option value="to">to</option>
+                            <option value="duration">duration:</option>
+                        </select>
+                        <!-- <input id="time-finish-input" type="text" placeholder="XX:XX" size="10"/>
+                        <select id="meridiam-end-input">
+                            <option value="am" selected>AM</option>
+                            <option value="pm">PM</option>
+                        </select> -->
+                        <input id="time-end-input" type="text" placeholder="XX:XX" size="10"/>
+                         <select id="meridiam-end-input">
                             <option value="am" selected>AM</option>
                             <option value="pm">PM</option>
                         </select>

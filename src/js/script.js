@@ -48,7 +48,7 @@ function createCellsWithinRange(earliestDate, latestDate) {
         // Create new cell
         const newCell = document.createElement("div");
         newCell.classList.add("cell");
-        newCell.id = date.toLocaleDateString("en-US");
+        newCell.id = date.toISOString().split("T")[0];
 
         // Apply styling to every second month
         if ((date.getMonth() + 1) % 2 !== 1) {
@@ -175,7 +175,7 @@ for (const cell of cells) {
     cell.classList.remove("current-date");
 }
 
-const currentDateId = currentDate.toLocaleDateString("en-US");
+const currentDateId = currentDate.toISOString().split("T")[0];
 const currentDateCell = document.getElementById(currentDateId);
 currentDateCell.classList.add("current-date");
 currentDateCell.scrollIntoView({

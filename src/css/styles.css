@@ -470,7 +470,7 @@ textarea {
     display: flex;
 }
 
-#title-input, #title-edit-input {
+#title-input {
     font-family: "Figtree", sans-serif;
     font-weight: bold;
     font-size: 24px;
@@ -511,6 +511,10 @@ input:focus, select:focus, textarea:focus {
     /* outline: 2px solid var(--brown); */
 }
 
+input:disabled {
+    background-color: var(--hover);
+}
+
 .urgency-status {
     width: 50px;
     border-radius: 5px 0px 0px 5px;
@@ -544,6 +548,26 @@ input:focus, select:focus, textarea:focus {
 .form-row {
     display: grid;
     grid-template-columns: 100px 1fr;
+}
+
+.form-row #start-date, .form-row #end-date {
+    display: block-inline;
+    width: 110px;
+}
+
+#date-range {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#date-range input {
+    flex: 1;
+    min-width: 0;
+}
+
+#date-range label {
+    flex: 0 0 auto;
 }
 
 #alert-box {
@@ -623,6 +647,38 @@ input:focus, select:focus, textarea:focus {
     color: var(--cream);
     /* outline: 2px solid red; */
 }
+
+#start-time-container {
+    display: inline-block;
+}
+
+#time-finish-type {
+    display: inline-block;
+    box-sizing: border-box;
+    background: none;
+    border: none;
+    text-align: center;
+    text-align-last: center;
+
+    color: var(--brown);
+    font-family: "figtree", sans-serif;
+    font-size: 16px;
+
+    padding: 5px;
+    width: 80px;
+
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+#time-finish-type:hover {
+    background-color: var(--cream-dark);
+}
+
+/* #duration-input {
+    display: inline-block;
+} */
 
 /* * {
     outline: 1px solid red;
