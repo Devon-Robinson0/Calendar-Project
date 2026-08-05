@@ -2,6 +2,8 @@ const currentDateText = document.getElementById("current-date");
 const eventContainer = document.getElementById("event-container");
 const addBtn = document.getElementById("add-btn");
 
+// localStorage.removeItem("events");
+
 // CREATE MODAL INPUTS
 const createEventWindow = document.getElementById("create-event-modal");
 const titleInput = document.getElementById("title-input");
@@ -18,9 +20,9 @@ const allDayCheckbox = document.getElementById("all-day-checkbox");
 // durationInput.disabled = true;
 // time options - to
 const timeFinishType = document.getElementById("time-finish-type");
-const meridiamStartInput = document.getElementById("meridiam-start-input");
 const timeEndInput = document.getElementById("time-end-input");
-const meridiamEndInput = document.getElementById("meridiam-end-input");
+// time options - duration
+const durationInput = document.getElementById("duration-input");
 // rest
 const locationInput = document.getElementById("location-input");
 const descriptionInput = document.getElementById("description-input");
@@ -44,6 +46,24 @@ const swatchPink = document.getElementById("swatch-pink");
 // Currently selected colour
 const selectedColour = document.getElementById("selected-colour");
 
+// Time options
+const toContainer = document.getElementById("to-container");
+const durationContainer = document.getElementById("duration-container");
+
+// Repeating
+const repeatOption = document.getElementById("repeat-dropdown");
+const repeatUntilSelect = document.getElementById("repeat-until-select");
+const repeatUntilDate = document.getElementById("repeat-until-date");
+
+// DOW checkboxes
+const mondayCheckbox = document.getElementById("monday-checkbox");
+const tuesdayCheckbox = document.getElementById("tuesday-checkbox");
+const wednesdayCheckbox = document.getElementById("wednesday-checkbox");
+const thursdayCheckbox = document.getElementById("thursday-checkbox");
+const fridayCheckbox = document.getElementById("friday-checkbox");
+const saturdayCheckbox = document.getElementById("saturday-checkbox");
+const sundayCheckbox = document.getElementById("sunday-checkbox");
+
 // Alert box
 const alertBox = document.getElementById("alert-box");
 const alertText = alertBox.querySelector("#alert-text");
@@ -58,9 +78,15 @@ let selectedEventColour = "green";
 const errors = {
     title: null,
     startTime: null,
+    endTime: null,
     startDate: null,
-    endDate: null
+    endDate: null,
+    duration: null,
 };
+
+timeFinishType.value = "to";
+toContainer.hidden = false;
+durationContainer.hidden = true;
 
 currentDateText.textContent = (new Date(currentDate)).toLocaleDateString("en-US", {
     day: "numeric",
@@ -78,11 +104,10 @@ try {
 function updateEvents() {
     localStorage.setItem("events", JSON.stringify(events));
 
-    const currentDateAsDate = new Date(currentDate);
-    const eventsOnDate = events.filter(event => new Date(event.startDate) <= currentDateAsDate && new Date(event.endDate) >= currentDateAsDate);
+    console.log(currentDate);
+    const eventsOnDate = events.filter(event => { return event.startDate <= currentDate && event.endDate >= currentDate })
     console.log(eventsOnDate);
     eventContainer.innerHTML = "";
-
 
     for (const event of eventsOnDate) {
         const timeString = event.allDayCheckbox ? "All Day" : `${event.startDate}<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m560-240-56-58 142-142H160v-80h486L504-662l56-58 240 240-240 240Z"/></svg>${event.endDate}`;
@@ -126,20 +151,52 @@ function updateEvents() {
             titleInput.value = event.title;
             startDate.value = event.startDate;
             endDate.value = event.endDate;
-            allDayCheckbox.value = event.allDayCheckbox;
-            if (!event.allDayCheckbox) {
-                let match = event.startTime.match(regex);
-                timeStartInput.value = match === null ? "" : match[0];
-                match = event.endTime.match(regex);
-                timeEndInput.value = match === null ? "" : match[0]
+            allDayCheckbox.checked = event.allDayCheckbox;
 
-                meridiamStartInput.value = event.startTime.slice(event.startTime.length - 2) === "am" ? "am" : "pm";
-                meridiamEndInput.value = event.endTime.slice(event.startTime.length - 2) === "am" ? "am" : "pm";
+            timeStartInput.disabled = event.allDayCheckbox;
+            timeStartInput.disabled = event.allDayCheckbox;
+            timeFinishType.disabled = event.allDayCheckbox;
+
+            if (!event.allDayCheckbox) {
+                timeStartInput.value = event.startTime;
+
+                if (event.endTime === null) {
+                    switchTimeInputType("duration");
+                    durationInput.value = event.duration;
+                    console.log(durationInput);
+                } else if (event.duration === null) {
+                    switchTimeInputType("to");
+                    if (event.endTime) {
+                        console.log(event.endTime);
+                        timeEndInput.value = event.endTime;
+                    }
+                } else {
+                    console.log("Not reconised time finish value");
+                }
             }
             
             // Colour & swatches
             selectedEventColour = event.colour;
             selectedColour.className = event.colour;
+
+            // Repeat
+            if (event.repeat.every !== "never") {
+                mondayCheckbox.checked = event.repeat.monday;
+                tuesdayCheckbox.checked = event.repeat.tuesday;
+                wednesdayCheckbox.checked = event.repeat.wednesday;
+                thursdayCheckbox.checked = event.repeat.thursday;
+                fridayCheckbox.checked = event.repeat.friday;
+                saturdayCheckbox.checked = event.repeat.saturday;
+                sundayCheckbox.checked = event.repeat.sunday;
+
+                repeatOption.value = event.repeat.every;
+                repeatUntilSelect.value = event.repeat.forever ? "forever" : "until";
+                repeatUntilDate.hidden = false;
+                repeatUntilDate.value = event.repeat.until;
+            } else {
+                repeatUntilDate.hidden = true;
+            }
+
             locationInput.value = event.location;
             descriptionInput.value = event.description;
             
@@ -165,19 +222,53 @@ function updateEvents() {
     }
 }
 
+function getTime(string) {
+    const regex = /^(\d{2}:\d{2})/;
+
+    return string.match(regex)[1];
+}
+
 function resetModal() {
     titleInput.value = "New Event";
+
+    allDayCheckbox.checked = false;
+    timeStartInput.disabled = false;
+    timeFinishType.disabled = false;
+    timeEndInput.disabled = false;
+
+    timeFinishType.value = "to";
+    durationInput.value = "1:00";
+
+    switchTimeInputType("to");
+
     startDate.value = currentDate;
     endDate.value = currentDate;
     timeStartInput.value = "";
-    meridiamStartInput.value = "am";
     timeEndInput.value = "";
-    meridiamEndInput.value = "am";
     locationInput.value = "";
     descriptionInput.value = "";
 
     selectedEventColour = "green";
     selectedColour.className = "green";
+
+    // Checkboxes
+    mondayCheckbox.checked = false;
+    tuesdayCheckbox.checked = false;
+    wednesdayCheckbox.checked = false;
+    thursdayCheckbox.checked = false;
+    fridayCheckbox.checked = false;
+    saturdayCheckbox.checked = false;
+    sundayCheckbox.checked = false;
+
+    // Repeat dropdown
+    repeatOption.value = "never";
+    repeatUntilSelect.value = "forever";
+    repeatUntilDate.hidden = true;
+    repeatUntilDate.value = currentDate;
+}
+
+function dateToLocaleString(date) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
 function changeColour(colour) {
@@ -211,7 +302,7 @@ function replaceSpaceWithColon(input) {
 }
 
 function convertHoursToMins(hours) {
-    return Math.floor(hours / 60) + (hours % 60);
+    return hours * 60;
 }
 
 addBtn.addEventListener("click", () => {
@@ -261,9 +352,33 @@ confirmEventBtn.addEventListener("click", () => {
     eventToChange.startTime = null;
     eventToChange.endTime = null;
     if (!allDayCheckbox.checked) {
-        eventToChange.startTime = `${timeStartInput.value}${meridiamStartInput.value}`;
-        eventToChange.endTime = `${timeEndInput.value}${meridiamEndInput.value}`;
+        eventToChange.startTime = timeStartInput.value;
+        switch (timeFinishType.value) {
+            case "to":
+                eventToChange.duration = null;
+                eventToChange.endTime = timeEndInput.value;
+                break;
+            case "duration":
+                eventToChange.endTime = null;
+                eventToChange.duration = durationInput.value;
+                console.log("Duration value: ", durationInput.value);
+                break;
+        }
     }
+    eventToChange.repeat = {
+        every: repeatOption.value,
+        forever: repeatUntilSelect.value === "forever" ? true : false,
+        until: repeatUntilDate.value,
+        monday: mondayCheckbox.checked,
+        tuesday: tuesdayCheckbox.checked,
+        wednesday: wednesdayCheckbox.checked,
+        thursday: thursdayCheckbox.checked,
+        friday: fridayCheckbox.checked,
+        saturday: saturdayCheckbox.checked,
+        sunday: sundayCheckbox.checked,
+    }
+    console.log("Repeat Obj: ", eventToChange.repeat);
+
     eventToChange.location = locationInput.value;
     eventToChange.description = descriptionInput.value;
 
@@ -274,15 +389,17 @@ confirmEventBtn.addEventListener("click", () => {
     }
 
     updateEvents();
-
     createEventWindow.classList.remove("show");
+    isEditing = false;
 });
 
 cancelEventBtn.addEventListener("click", () => {
     for (const err in errors) {
         errors[err] = null;
     }
+    isEditing = false;
     updateAlert();
+    resetModal();
     createEventWindow.classList.remove("show");
 });
 
@@ -300,49 +417,83 @@ titleInput.addEventListener("change", () => {
     }
 });
 
-timeStartInput.addEventListener("input", e => {
-    replaceSpaceWithColon(timeStartInput);
-});
-
-timeEndInput.addEventListener("input", e => {
-    replaceSpaceWithColon(timeEndInput);
+durationInput.addEventListener("input", e => {
+    replaceSpaceWithColon(durationInput);
 });
 
 timeStartInput.addEventListener("change", () => {
-    validateTimeInput(timeStartInput, "startTime");
+    // validateTimeInput(timeStartInput, "startTime");
+
+    try {
+        checkFinishTime();
+
+        errors.startTime = null;
+        updateAlert();
+    } catch (err) {
+        errors.startTime = err;
+        updateAlert();
+    }
 });
 
 timeEndInput.addEventListener("change", () => {
-    validateTimeInput(timeEndInput, "endTime");
+    // validateTimeInput(timeEndInput, "endTime");
+
+    try {
+        checkFinishTime();
+
+        errors.endTime = null;
+        updateAlert();
+    } catch (err) {
+        errors.endTime = err;
+        updateAlert();
+    }
 });
 
-function validateTimeInput(input, errorKey) {
-    // Verify time
-    const match = input.value.match(/(\d*):(\d*)/);
+durationInput.addEventListener("change", () => {
+    validateTimeInput(durationInput, "duration");
+    console.log("Change");
+});
 
-    let hour = 0;
-    let mins = 0;
-    if (match) {
-        hour = Number(match[1]);
-        mins = Number(match[2]);
-        // console.log(hour);
-        // console.log(min);
-    } 
-    
+function checkFinishTime() {
+    if (timeEndInput.value === "" || timeStartInput.value === "") return;
+
+    const startTimeInMins = convert24HourTimeToMins(timeStartInput.value);
+    console.log(startTimeInMins);
+    const endTimeInMins = convert24HourTimeToMins(timeEndInput.value);
+    console.log(endTimeInMins);
+
+    if (endTimeInMins < startTimeInMins) {
+        throw new Error("End time must be after start time");
+    }
+}
+
+function validateTimeInput(input, errorKey) {
     // Verify hours & mins
     if (!(input.value === "")) {
         try {
-            if (Number.isNaN(hour) || hour === undefined || hour === null) {
-                throw new Error("Hour and minutes must be numbers on either side of ':'");
+            const match = input.value.match(/^(\d{1,2}):(\d{2})$/);
+            console.log(match);
+
+            let hour = 0;
+            let mins = 0;
+            if (match) {
+                hour = Number(match[1]);
+                mins = Number(match[2]);
+            }  else {
+                throw new Error("Duration must match format XX:XX");
             }
-            if (hour < 1 || hour > 12) {
-                throw new Error("Hour must be between 1-12");
-            }
-            if (Number.isNaN(mins) || mins === undefined || mins === null) {
-                throw new Error("Hour and minutes must be numbers on either side of ':'");
+            if (hour < 1 || hour > 24) {
+                throw new Error("Hour must be between 1-24");
             }
             if (mins < 0 || mins > 59) {
                 throw new Error("Minutes must be between 1-59");
+            }
+
+            const totalMins = convertHoursToMins(hour) + mins;
+            const startTimeMins = convert24HourTimeToMins(timeStartInput.value);
+            const remainingMins = 1440 - totalMins - startTimeMins;
+            if (remainingMins < 0) {
+                throw new Error("Duration must fit within day, hours left: " + convertMinsToHours(1440 - startTimeMins));
             }
 
             errors[errorKey] = null;
@@ -357,64 +508,17 @@ function validateTimeInput(input, errorKey) {
     }
 }
 
-// durationInput.addEventListener("change", () => {
-//     // Verify time
-//     const match = durationInput.value.match(/(\d*):(\d*)/);
+function convert24HourTimeToMins(time) {
+    const match = time.match(/^(\d{1,2}):(\d{2})$/);
+    const [hour, mins] = [Number(match[1]), Number(match[2])];
+    return (hour * 60) + mins;
+}
 
-//     const hourRegex = /^(\d{1,2})/;
-//     const minsRegex = /(\d{1,2})/;
-//     const hourAmount = Number(timeStartInput.value.match(hourRegex)[1]);
-//     const minsAmount = Number(timeStartInput.value.match(minsRegex)[1]);
-
-//     let totalMins = convertHoursToMins(hourAmount) + minsAmount;
-//     // 1440
-//     if (meridiamStartInput.value === "pm") {
-//         totalMins += 720;
-//     }
-
-//     const maxMins = 1440 - totalMins;
-//     console.log(maxMins);
-
-//     let hour = 0;
-//     let mins = 0;
-//     if (match) {
-//         hour = Number(match[1]);
-//         mins = Number(match[2]);
-//         // console.log(hour);
-//         // console.log(min);
-//     } 
-    
-//     // Verify hours & mins
-//     if (!(durationInput.value === "")) {
-//         try {
-//             if (Number.isNaN(hour) || hour === undefined || hour === null) {
-//                 throw new Error("Hour and minutes must be numbers on either side of ':'");
-//             }
-//             if (convertHoursToMins(hour) + mins > maxMins) {
-//                 throw new Error("Duration must fit within current day");
-//             }
-//             if (hour < 1 || hour > 12) {
-//                 throw new Error("Hour must be between 1-12");
-//             }
-//             if (Number.isNaN(mins) || mins === undefined || mins === null) {
-//                 throw new Error("Hour and minutes must be numbers on either side of ':'");
-//             }
-//             if (mins < 0 || mins > 59) {
-//                 throw new Error("Minutes must be between 1-59");
-//             }
-            
-
-//             errors.time = null;
-//             updateAlert();
-//         } catch (err) {
-//             errors.time = err;
-//             updateAlert();
-//         }
-//     } else {
-//         errors.time = null;
-//         updateAlert();
-//     }
-// });
+function convertMinsToHours(mins) {
+    const hours = Math.floor(mins / 60);
+    mins = mins % 60;
+    return `${hours}:${mins}`;
+}
 
 confirmDelBtn.addEventListener("click", () => {
     events = events.filter(event => event.id !== currentIdSelected);
@@ -465,15 +569,38 @@ allDayCheckbox.addEventListener("click", () => {
     if (allDayCheckbox.checked) {
         timeStartInput.disabled = true;
         timeEndInput.disabled = true;
-        meridiamStartInput.disabled = true;
-        meridiamEndInput.disabled = true;
         timeFinishType.disabled = true;
     } else {
         timeStartInput.disabled = false;
         timeEndInput.disabled = false;
-        meridiamStartInput.disabled = false;
-        meridiamEndInput.disabled = false;
         timeFinishType.disabled = false;
+    }
+});
+
+timeFinishType.addEventListener("change", () => {
+    switchTimeInputType(timeFinishType.value);
+});
+
+function switchTimeInputType(type) {
+    if (type === "to") {
+        toContainer.hidden = false;
+        durationContainer.hidden = true;
+    } else if (type === "duration") {
+        toContainer.hidden = true;
+        durationContainer.hidden = false;
+    } else {
+        console.error("Could not find timeFinishType value of: ", timeFinishType.value);
+        return;
+    }
+
+    timeFinishType.value = type;
+}
+
+repeatUntilSelect.addEventListener("change", () => {
+    if (repeatUntilSelect.value === "forever") {
+        repeatUntilDate.hidden = true;
+    } else if (repeatUntilSelect.value === "until") {
+        repeatUntilDate.hidden = false;
     }
 });
 

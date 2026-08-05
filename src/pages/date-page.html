@@ -60,26 +60,82 @@
                     <label for="time-start-input">Time:</label>
                     <div class="inline-column">
                         <div id="start-time-container">
-                            <input id="time-start-input" type="text" placeholder="XX:XX" size="10"/>
-                            <select id="meridiam-start-input">
+                            <input id="time-start-input" type="time" placeholder="XX:XX" size="10"/>
+                            <!-- <select id="meridiam-start-input">
                                 <option value="am" selected>AM</option>
                                 <option value="pm">PM</option>
-                            </select>
+                            </select> -->
                         </div>
-                        <select id="time-finish-type">
+                        <select id="time-finish-type" class="hidden-dropdown">
                             <option value="to">to</option>
                             <option value="duration">duration:</option>
                         </select>
+
+                        <div id="to-container">
+                            <input id="time-end-input" type="time" placeholder="XX:XX" size="10"/>
+                            <!-- <select id="meridiam-end-input">
+                                <option value="am" selected>AM</option>
+                                <option value="pm">PM</option>
+                            </select> -->
+                        </div>
+                        <div id="duration-container">
+                            <input id="duration-input" type="text" placeholder="XX:XX" size="10"/>
+                        </div>
                         <!-- <input id="time-finish-input" type="text" placeholder="XX:XX" size="10"/>
                         <select id="meridiam-end-input">
                             <option value="am" selected>AM</option>
                             <option value="pm">PM</option>
                         </select> -->
-                        <input id="time-end-input" type="text" placeholder="XX:XX" size="10"/>
-                         <select id="meridiam-end-input">
-                            <option value="am" selected>AM</option>
-                            <option value="pm">PM</option>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label for="dow-checkbox-container">Repeat: </label>
+                    <div class="inline-column">
+                        <select id="repeat-dropdown">
+                            <option value="never">Never</option>
+                            <option value="week">Every week</option>
                         </select>
+
+                        <select id="repeat-until-select" class="hidden-dropdown">
+                            <option value="forever" selected>Forever</option>
+                            <option value="until">Until</option>
+                        </select>
+                        <input id="repeat-until-date" type="date" />
+                    </div>
+                </div>
+
+                <div class="form-row" id="dow-selector">
+                    <label></label>
+                    <div id="dow-checkbox-container">
+                        <label class="checkbox-btn">
+                            <input id="monday-checkbox" type="checkbox" class="dow-checkbox" />
+                            <span>M</span>
+                        </label>
+                        <label class="checkbox-btn">
+                            <input id="tuesday-checkbox" type="checkbox" class="dow-checkbox" />
+                            <span>T</span>
+                        </label>
+                        <label class="checkbox-btn">
+                            <input id="wednesday-checkbox" type="checkbox" class="dow-checkbox" />
+                            <span>W</span>
+                        </label>
+                        <label class="checkbox-btn">
+                            <input id="thursday-checkbox" type="checkbox" class="dow-checkbox" />
+                            <span>T</span>
+                        </label>
+                        <label class="checkbox-btn">
+                            <input id="friday-checkbox" type="checkbox" class="dow-checkbox" />
+                            <span>F</span>
+                        </label>
+                        <label class="checkbox-btn">
+                            <input id="saturday-checkbox" type="checkbox" class="dow-checkbox" />
+                            <span>S</span>
+                        </label>
+                        <label class="checkbox-btn">
+                            <input id="sunday-checkbox" type="checkbox" class="dow-checkbox" />
+                            <span>S</span>
+                        </label>
                     </div>
                 </div>
                 

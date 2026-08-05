@@ -49,7 +49,7 @@ function createCellsWithinRange(earliestDate, latestDate) {
         // Create new cell
         const newCell = document.createElement("div");
         newCell.classList.add("cell");
-        newCell.id = date.toISOString().split("T")[0];
+        newCell.id = dateToLocaleString(date);
 
         // Apply styling to every second month
         if ((date.getMonth() + 1) % 2 !== 1) {
@@ -65,11 +65,27 @@ function createCellsWithinRange(earliestDate, latestDate) {
         cellDate.textContent = String(date.getDate());
         newCell.appendChild(cellDate);
 
-        const currentDateAsDate = new Date(date.toISOString().split("T")[0]);
+        // get day of week
+        const dayOfWeek = getDayOfWeek(date);
 
         // Find events for current date
-        const eventsOnDate = events.filter(event => new Date(event.startDate) <= currentDateAsDate && new Date(event.endDate) >= currentDateAsDate);
-        // console.log(eventsOnDate);
+        const eventsOnDate = events.filter(event => {
+            if (event.startDate <= newCell.id && event.endDate >= newCell.id) {
+                return true;
+            }
+            const diff = getDifferenceOfDates(event.startDate, event.endDate);
+            if (event.repeat.every === "week" && (event.repeat[dayOfWeek] || addDaysToDate(event.lastDateOf, diff) >= newCell.id) && (event.repeat.forever || 
+                    (event.repeat.until >= newCell.id && newCell.id > event.startDate))) {
+                return true;
+            }
+        });
+
+        eventsOnDate.forEach(event => {
+            if (!event.repeat[dayOfWeek] && event.startDate !== newCell.id) return;
+
+            event.lastDateOf = newCell.id;
+            console.log(event.lastDateOf);
+        });
         // Create container for banners
         const bannerContainer = document.createElement("div");
         bannerContainer.classList.add("banner-container");
@@ -103,6 +119,62 @@ function createCellsWithinRange(earliestDate, latestDate) {
     }
 }
 
+function checkLastEventOverlap(currDate, event) {
+    // Loop back until a viable date for the start of the last event
+        // on same day // before finish date
+    // Add the difference to that date to discover when it ends
+    // Compare if the current date is equal to or less than the new end
+}
+
+function getDifferenceOfDates(date1, date2) {
+    const date1AsObj = new Date(date1);
+    const date2AsObj = new Date(date2);
+    return (date2AsObj - date1AsObj) / (1000 * 60 * 60 * 24);
+}
+
+function addDaysToDate(date, days) {
+    const dateAsDateObj = new Date(date);
+    dateAsDateObj.setDate(dateAsDateObj.getDate() + days);
+    console.log("local: ", dateToLocaleString(dateAsDateObj));
+    return dateToLocaleString(dateAsDateObj);
+}
+
+function getDayOfWeek(date) {
+    switch (date.getDay()) {
+        case 1:
+            return "monday";
+            break;
+        case 2:
+            return "tuesday";
+            break;
+        case 3:
+            return "wednesday";
+            break;
+        case 4:
+            return "thursday";
+            break;
+        case 5:
+            return "friday";
+            break;
+        case 6:
+            return "saturday";
+            break;
+        case 0:
+            return "sunday";
+            break;
+    }
+}
+
+function splitDate(date) {
+    const regex = /^(\d{4})-(\d{2})-(\d{2})$/;
+    const match = date.match(regex);
+    return [Number(match[1]), Number(match[2]), Number(match[3])];
+}
+
+function dateToLocaleString(date) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
 dayOfWeek = date.getDay() - 1;
 if (dayOfWeek === 0) {
     dayOfWeek = 7;
@@ -121,10 +193,15 @@ function createBanner(event, cell, container) {
     banner.classList.add("banner");
     banner.classList.add(event.colour);
 
-    const bannerTitle = document.createElement("p");
-    bannerTitle.textContent = event.title;
+    const eventStartDate = new Date(event.startDate);
+    if (isSameDate(eventStartDate, new Date(cell.id))) {
+        const bannerTitle = document.createElement("p");
+        bannerTitle.textContent = event.title;
+        banner.appendChild(bannerTitle);
+
+        banner.classList.add("head");
+    }
     
-    banner.appendChild(bannerTitle);
     container.appendChild(banner);
     cell.appendChild(container);
 }
@@ -173,12 +250,18 @@ function convertNumToMonth(num) {
     return month;
 }
 
+function isSameDate(date1, date2) {
+    return date1.getFullYear() === date2.getFullYear() &&
+        date1.getMonth() === date2.getMonth() &&
+        date1.getDate() === date2.getDate();
+}
+
 const cells = document.querySelectorAll(".cell");
 for (const cell of cells) {
     cell.classList.remove("current-date");
 }
 
-const currentDateId = currentDate.toISOString().split("T")[0];
+const currentDateId = dateToLocaleString(currentDate);
 const currentDateCell = document.getElementById(currentDateId);
 currentDateCell.classList.add("current-date");
 currentDateCell.scrollIntoView({
@@ -208,13 +291,18 @@ icalInput.addEventListener("change", async event => {
 
     const content = await file.text();
     console.log(content);
+
+    const titleRegex = /^SUMMARY;LANGUAGE=.*:(.+)/m;
+    const title = content.match(titleRegex)[1];
+    console.log(title);
 });
 
 setTimeout(() => {
     window.addEventListener("scroll", () => {
         checkForNewMonths();
     });
-}, 2000);
+    checkForNewMonths();
+}, 1500);
 
 
 function monthsWithin(month1, month2, dist) {
@@ -234,7 +322,7 @@ function checkForNewMonths() {
     if (!element) return;
 
     // regex
-    const monthRegex = /^\d{4}-(\d{2})-\d{2}$/;
+    const monthRegex = /^\d{4}-(\d{2})-\d{2}/;
     const yearRegex = /^(\d{4})/;
 
     const monthNum = Number(element?.id.match(monthRegex)[1]);
